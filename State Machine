@@ -1,0 +1,49 @@
+extends Node
+
+class_name CharacterStateMachine
+
+
+#this makes an array of your states for storage 
+var states : Array[State]
+
+#Check the children of this node and make a bank of states out of those children. Else, Identifiy which nodes are not a state but are a child of CharacterStateMachine
+func _ready():
+	for child in get_children():
+		if(child is State):
+			states.append(child)
+			
+			# Set the states up with what they need to function
+			child.character = character
+			child.playback = animation_tree["parameters/playback"]
+			
+		else:
+			push_warning("State machine contains child '" + child.name + "' which is not 'State'")
+			
+			
+			
+func _physics_process(delta):
+	if(current_state.next_state != null):
+
+		switch_states(current_state.next_state)
+		
+	current_state.state_process(delta)
+
+# this is to control if an entity can move while in a particular state
+func check_if_can_move():
+	return current_state.can_move
+
+
+func switch_states(new_state : State):
+	if(current_state != null):
+		current_state.on_exit()
+		current_state.next_state = null
+	
+	previous_state = current_state
+	current_state = new_state
+	#print("Previous State: " + previous_state.name)
+	current_state.on_enter()
+	character.debug_label.text = current_state.name
+
+# to track input events in the states
+func _input(event : InputEvent):
+	current_state.state_input(event)
