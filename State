@@ -1,0 +1,28 @@
+class_name State
+extends Node
+ 
+signal transitioned(new_state_name: StringName)
+ 
+@export var can_move : bool = true
+@export var slow_move : bool = false
+
+var playback : AnimationNodeStateMachinePlayback
+var next_state : State
+var previous_state : State
+var current_state : State
+
+# only runs while the state is active
+func state_process(_delta):
+	pass
+
+# calls the function based on Input, while being the active state
+func state_input (_event : InputEvent):
+	pass
+
+# runs when the state becomes the current state
+func on_enter():
+	pass
+
+# runs right before switching to the new state
+func on_exit():
+	pass
